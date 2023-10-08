@@ -1,0 +1,22 @@
+{
+    "name": "@shipload/sdk",
+    "module": "lib/shipload.m.js",
+    "type": "module",
+    "main": "lib/shipload.js",
+    "types": "lib/shipload.d.ts",
+    "unpkg": "lib/shipload.bundle.js",
+    "devDependencies": {
+        "@rollup/plugin-typescript": "^11.1.5",
+        "bun-types": "latest",
+        "rollup": "^4.0.2",
+        "rollup-plugin-cleanup": "^3.2.1",
+        "rollup-plugin-dts": "^6.1.0",
+        "tslib": "^2.6.2",
+        "typescript": "^5.2.2"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {},
+    "version": "0.0.1"
+}
