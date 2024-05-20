@@ -1,4 +1,8 @@
-import {Coordinates, ServerContract} from './index-module'
+import {Checksum256} from '@wharfkit/antelope'
+
+import {ServerContract} from './contracts'
+import {hash} from './hash'
+import {Coordinates} from './types'
 
 export function distance(ship: ServerContract.Types.ship_row): number {
     if (ship.travelplan) {
@@ -17,4 +21,9 @@ export function lerp(origin: Coordinates, destination: Coordinates, time: number
 
 export function rotation(origin: Coordinates, destination: Coordinates) {
     return Math.atan2(destination.y - origin.y, destination.x - origin.x) * (180 / Math.PI) + 90
+}
+
+export function hasPlanet(seed: Checksum256, coords: Coordinates): boolean {
+    const str = ['system', coords.x, coords.y].join('-')
+    return hash(seed, str).slice(0, 2) === '00'
 }
