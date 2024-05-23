@@ -11,6 +11,6 @@ suite('travel', function () {
             id: 1,
             destination: {x: 0, y: 2},
         })
-        console.log(Serializer.objectify(result))
+        // console.log(Serializer.objectify(result))
     })
 })
