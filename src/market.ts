@@ -1,6 +1,6 @@
 import {Coordinates, GoodPrice, StateData} from './types'
 import {getGood, goods} from './goods'
-import {APIClient} from '@wharfkit/antelope'
+import {APIClient, UInt64} from '@wharfkit/antelope'
 import {roll} from './rolls'
 import {ERROR_SYSTEM_NOT_INITIALIZED} from './errors'
 import {ServerContract} from './contracts'
@@ -18,14 +18,14 @@ export async function marketprice(
     location: Coordinates,
     good_id: number,
     client?: APIClient
-): Promise<number> {
+): Promise<UInt64> {
     const serverClient = client || new APIClient({url: 'https://jungle4.greymass.com'})
     const stateData = await getState(serverClient)
 
     const epochSeed = stateData.epochseed
     const good = getGood(good_id)
 
-    const rollSeed: string = `${location.x}${epochSeed}${location.y}${good_id}`
+    const rollSeed = `${location.x}${epochSeed}${location.y}${good_id}`
     const rollValue = roll(stateData.seed, rollSeed)
     const price = priceFromRoll(good.base_price, rollValue)
 
@@ -35,17 +35,19 @@ export async function marketprice(
 export async function marketprices(
     location: Coordinates,
     client?: APIClient
-): Promise<GoodPrice[]> {
+): Promise<ServerContract.Types.good_price[]> {
     const serverClient = client || new APIClient({url: 'https://jungle4.greymass.com'})
     return Promise.all(
-        goods.map(async (good) => ({
-            price: await marketprice(location, good.id, serverClient),
-            good_id: good.id,
-        }))
+        goods.map(async (good) => {
+            return ServerContract.Types.good_price.from({
+                price: await marketprice(location, good.id, serverClient),
+                id: good.id,
+            })
+        })
     )
 }
 
-export function priceFromRoll(basePrice: number, roll: number): number {
+export function priceFromRoll(basePrice: number, roll: number): UInt64 {
     let price: number
 
     if (roll < 13) {
@@ -72,5 +74,5 @@ export function priceFromRoll(basePrice: number, roll: number): number {
         price = basePrice * 0.285 // ~0.02% chance
     }
 
-    return Number(price.toFixed(0))
+    return UInt64.from(price)
 }

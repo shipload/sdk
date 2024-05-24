@@ -1,7 +1,7 @@
-import assert from 'assert'
+import {assert} from 'chai'
 import {makeClient} from '@wharfkit/mock-data'
 
-import {Coordinates, ServerContract, marketprice, marketprices, priceFromRoll} from '$lib'
+import {Coordinates, marketprice, marketprices, priceFromRoll, ServerContract} from '$lib'
 
 const client = makeClient('https://jungle4.greymass.com')
 const server = new ServerContract.Contract({client})
@@ -18,7 +18,7 @@ suite('market', function () {
                 good_id,
             })
 
-            assert.equal(price, onChainMarketPrice.toNumber()) // should be onChainMarketPrice value
+            assert.isTrue(price.equals(onChainMarketPrice)) // should be onChainMarketPrice value
         })
     })
 
@@ -33,8 +33,8 @@ suite('market', function () {
                 location,
             })
 
-            prices.forEach(({good_id, price}, index) => {
-                assert.equal(price, onChainMarketPrices[index].price.toNumber())
+            prices.forEach(({price}, index) => {
+                assert.isTrue(price.equals(onChainMarketPrices[index].price))
             })
         })
     })
@@ -42,57 +42,57 @@ suite('market', function () {
     suite('priceFromRoll', function () {
         test('should return base price multiplied by 2.25 when roll < 13', function () {
             const result = priceFromRoll(100, 10)
-            assert.strictEqual(result, 225.0)
+            assert.isTrue(result.equals(225))
         })
 
         test('should return base price multiplied by 1.75 when roll < 176', function () {
             const result = priceFromRoll(100, 100)
-            assert.strictEqual(result, 175.0)
+            assert.isTrue(result.equals(175))
         })
 
         test('should return base price multiplied by 1.4 when roll < 996', function () {
             const result = priceFromRoll(100, 500)
-            assert.strictEqual(result, 140.0)
+            assert.isTrue(result.equals(140))
         })
 
         test('should return base price multiplied by 1.225 when roll < 2966', function () {
             const result = priceFromRoll(100, 2000)
-            assert.strictEqual(result, 122.5)
+            assert.isTrue(result.equals(122))
         })
 
-        test('should return base price multiplied by 1.07 when roll < 19568', function () {
+        test('should return base price multiplied by 17 when roll < 19568', function () {
             const result = priceFromRoll(100, 10000)
-            assert.strictEqual(result, 107.0)
+            assert.isTrue(result.equals(107))
         })
 
         test('should return 0 when roll < 45988', function () {
             const result = priceFromRoll(100, 30000)
-            assert.strictEqual(result, 0.0)
+            assert.isTrue(result.equals(0))
         })
 
         test('should return base price multiplied by 0.925 when roll < 62508', function () {
             const result = priceFromRoll(100, 50000)
-            assert.strictEqual(result, 92.5)
+            assert.isTrue(result.equals(92))
         })
 
         test('should return base price multiplied by 0.77 when roll < 64518', function () {
             const result = priceFromRoll(100, 63000)
-            assert.strictEqual(result, 77.0)
+            assert.isTrue(result.equals(77))
         })
 
         test('should return base price multiplied by 0.595 when roll < 65437', function () {
             const result = priceFromRoll(100, 65000)
-            assert.strictEqual(result, 59.5)
+            assert.isTrue(result.equals(59))
         })
 
         test('should return base price multiplied by 0.41 when roll < 65523', function () {
             const result = priceFromRoll(100, 65500)
-            assert.strictEqual(result, 41.0)
+            assert.isTrue(result.equals(41))
         })
 
         test('should return base price multiplied by 0.285 when roll >= 65523', function () {
             const result = priceFromRoll(100, 65523)
-            assert.strictEqual(result, 28.5)
+            assert.isTrue(result.equals(28))
         })
     })
 })
