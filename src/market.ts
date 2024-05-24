@@ -26,7 +26,7 @@ export async function marketprice(
     const good = getGood(good_id)
 
     const rollSeed: string = `${location.x}${epochSeed}${location.y}${good_id}`
-    const rollValue = roll(rollSeed)
+    const rollValue = roll(stateData.seed, rollSeed)
     const price = priceFromRoll(good.base_price, rollValue)
 
     return price
@@ -46,15 +46,31 @@ export async function marketprices(
 }
 
 export function priceFromRoll(basePrice: number, roll: number): number {
-    if (roll < 13) return basePrice * 2.25 // ~0.02% chance
-    if (roll < 176) return basePrice * 1.75 // ~0.25% chance
-    if (roll < 996) return basePrice * 1.4 // ~1.25% chance
-    if (roll < 2966) return basePrice * 1.225 // ~3.00% chance
-    if (roll < 19568) return basePrice * 1.07 // ~25.33% chance
-    if (roll < 45988) return 0 // ~40.30% chance
-    if (roll < 62508) return basePrice * 0.925 // ~25.33% chance
-    if (roll < 64518) return basePrice * 0.77 // ~3.00% chance
-    if (roll < 65437) return basePrice * 0.595 // ~1.25% chance
-    if (roll < 65523) return basePrice * 0.41 // ~0.25% chance
-    return basePrice * 0.285 // ~0.02% chance
+    let price: number
+
+    if (roll < 13) {
+        price = basePrice * 2.25 // ~0.02% chance
+    } else if (roll < 176) {
+        price = basePrice * 1.75 // ~0.25% chance
+    } else if (roll < 996) {
+        price = basePrice * 1.4 // ~1.25% chance
+    } else if (roll < 2966) {
+        price = basePrice * 1.225 // ~3.00% chance
+    } else if (roll < 19568) {
+        price = basePrice * 1.07 // ~25.33% chance
+    } else if (roll < 45988) {
+        price = 0 // ~40.30% chance
+    } else if (roll < 62508) {
+        price = basePrice * 0.925 // ~25.33% chance
+    } else if (roll < 64518) {
+        price = basePrice * 0.77 // ~3.00% chance
+    } else if (roll < 65437) {
+        price = basePrice * 0.595 // ~1.25% chance
+    } else if (roll < 65523) {
+        price = basePrice * 0.41 // ~0.25% chance
+    } else {
+        price = basePrice * 0.285 // ~0.02% chance
+    }
+
+    return Number(price.toFixed(0))
 }

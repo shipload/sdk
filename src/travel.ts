@@ -25,5 +25,5 @@ export function rotation(origin: Coordinates, destination: Coordinates) {
 
 export function hasPlanet(seed: Checksum256, coords: Coordinates): boolean {
     const str = ['system', coords.x, coords.y].join('-')
-    return hash(seed, str).slice(0, 2) === '00'
+    return String(hash(seed, str)).slice(0, 2) === '00'
 }
