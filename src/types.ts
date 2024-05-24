@@ -1,4 +1,4 @@
-import {Checksum256Type} from '@wharfkit/antelope'
+import {Checksum256Type, UInt64Type} from '@wharfkit/antelope'
 
 export interface Coordinates {
     x: number
@@ -29,7 +29,7 @@ export interface Good {
 
 export interface GoodPrice {
     good_id: number
-    price: number
+    price: UInt64Type
 }
 
 export interface StateData {

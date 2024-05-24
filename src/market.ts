@@ -1,55 +1,35 @@
-import {Coordinates, GoodPrice, StateData} from './types'
+import {Coordinates, GoodPrice} from './types'
 import {getGood, goods} from './goods'
-import {APIClient, UInt64} from '@wharfkit/antelope'
+import {Checksum256Type, UInt64} from '@wharfkit/antelope'
 import {roll} from './rolls'
-import {ERROR_SYSTEM_NOT_INITIALIZED} from './errors'
-import {ServerContract} from './contracts'
-
-async function getState(client: APIClient): Promise<StateData> {
-    const server = new ServerContract.Contract({client})
-    const state = await server.table('state').get()
-    if (!state) {
-        throw new Error(ERROR_SYSTEM_NOT_INITIALIZED)
-    }
-    return state
-}
 
 export async function marketprice(
     location: Coordinates,
     good_id: number,
-    client?: APIClient
+    gameSeed: Checksum256Type,
+    epochSeed: Checksum256Type
 ): Promise<UInt64> {
-    const serverClient = client || new APIClient({url: 'https://jungle4.greymass.com'})
-    const stateData = await getState(serverClient)
-
-    const epochSeed = stateData.epochseed
     const good = getGood(good_id)
-
     const rollSeed = `${location.x}${epochSeed}${location.y}${good_id}`
-    const rollValue = roll(stateData.seed, rollSeed)
-    const price = priceFromRoll(good.base_price, rollValue)
-
-    return price
+    const rollValue = roll(gameSeed, rollSeed)
+    return priceFromRoll(good.base_price, rollValue)
 }
 
 export async function marketprices(
     location: Coordinates,
-    client?: APIClient
-): Promise<ServerContract.Types.good_price[]> {
-    const serverClient = client || new APIClient({url: 'https://jungle4.greymass.com'})
+    gameSeed: Checksum256Type,
+    epochSeed: Checksum256Type
+): Promise<GoodPrice[]> {
     return Promise.all(
         goods.map(async (good) => {
-            return ServerContract.Types.good_price.from({
-                price: await marketprice(location, good.id, serverClient),
-                id: good.id,
-            })
+            const price = await marketprice(location, good.id, gameSeed, epochSeed)
+            return {price, good_id: good.id}
         })
     )
 }
 
 export function priceFromRoll(basePrice: number, roll: number): UInt64 {
     let price: number
-
     if (roll < 13) {
         price = basePrice * 2.25 // ~0.02% chance
     } else if (roll < 176) {
@@ -73,6 +53,5 @@ export function priceFromRoll(basePrice: number, roll: number): UInt64 {
     } else {
         price = basePrice * 0.285 // ~0.02% chance
     }
-
     return UInt64.from(price)
 }
