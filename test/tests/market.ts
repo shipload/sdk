@@ -1,41 +1,90 @@
 import {assert} from 'chai'
-import {makeClient} from '@wharfkit/mock-data'
-
-import {Coordinates, marketprice, marketprices, priceFromRoll, ServerContract} from '$lib'
-
-const client = makeClient('https://jungle4.greymass.com')
-const server = new ServerContract.Contract({client})
+import {Coordinates, marketprice, marketprices, priceFromRoll} from '$lib'
+import {Checksum256Type} from '@wharfkit/antelope'
 
 suite('market', function () {
     suite('marketprice', function () {
         test('SDK output matches API', async function () {
             const location: Coordinates = {x: 10, y: 20}
             const good_id = 1
-            const price = await marketprice(location, good_id, client)
+            const gameSeed: Checksum256Type = 'gameSeedSample'
+            const epochSeed: Checksum256Type = 'epochSeedSample'
+            const price = await marketprice(location, good_id, gameSeed, epochSeed)
 
-            const {price: onChainMarketPrice} = await server.readonly('marketprice', {
-                location,
-                good_id,
-            })
-
-            assert.isTrue(price.equals(onChainMarketPrice)) // should be onChainMarketPrice value
+            assert.equal(price.toNumber(), 214)
         })
     })
 
     suite('marketprices', function () {
         test('SDK output matches API', async function () {
             const location: Coordinates = {x: 10, y: 20}
-            const prices = await marketprices(location, client)
+            const gameSeed: Checksum256Type = 'gameSeedSample'
+            const epochSeed: Checksum256Type = 'epochSeedSample'
+            const prices = await marketprices(location, gameSeed, epochSeed)
 
             assert(prices.length > 0)
 
-            const onChainMarketPrices = await server.readonly('marketprices', {
-                location,
-            })
-
-            prices.forEach(({price}, index) => {
-                assert.isTrue(price.equals(onChainMarketPrices[index].price))
-            })
+            assert.deepEqual(
+                prices.map(({price, id}) => ({price: price.toNumber(), id})),
+                [
+                    {
+                        id: 1,
+                        price: 214,
+                    },
+                    {
+                        id: 2,
+                        price: 0,
+                    },
+                    {
+                        id: 3,
+                        price: 370,
+                    },
+                    {
+                        id: 4,
+                        price: 0,
+                    },
+                    {
+                        id: 5,
+                        price: 740,
+                    },
+                    {
+                        id: 6,
+                        price: 0,
+                    },
+                    {
+                        id: 7,
+                        price: 149,
+                    },
+                    {
+                        id: 8,
+                        price: 166,
+                    },
+                    {
+                        id: 9,
+                        price: 235,
+                    },
+                    {
+                        id: 10,
+                        price: 0,
+                    },
+                    {
+                        id: 11,
+                        price: 321,
+                    },
+                    {
+                        id: 12,
+                        price: 374,
+                    },
+                    {
+                        id: 13,
+                        price: 0,
+                    },
+                    {
+                        id: 14,
+                        price: 0,
+                    },
+                ]
+            )
         })
     })
 
@@ -60,7 +109,7 @@ suite('market', function () {
             assert.isTrue(result.equals(122))
         })
 
-        test('should return base price multiplied by 17 when roll < 19568', function () {
+        test('should return base price multiplied by 1.07 when roll < 19568', function () {
             const result = priceFromRoll(100, 10000)
             assert.isTrue(result.equals(107))
         })

@@ -1,0 +1,29 @@
+{
+    "request": {
+        "path": "https://jungle4.greymass.com/v1/chain/get_table_rows",
+        "params": {
+            "method": "POST",
+            "body": "{\"table\":\"state\",\"code\":\"server\",\"scope\":\"server\",\"limit\":1,\"key_type\":\"name\",\"json\":false}",
+            "headers": {}
+        }
+    },
+    "status": 400,
+    "json": {
+        "code": 400,
+        "message": "Account lookup",
+        "error": {
+            "code": 3060002,
+            "name": "account_query_exception",
+            "what": "Account Query Exception",
+            "details": [
+                {
+                    "message": "Fail to retrieve account for server",
+                    "file": "chain_plugin.cpp",
+                    "line_number": 1540,
+                    "method": "get_abi"
+                }
+            ]
+        }
+    },
+    "text": "{\"code\":400,\"message\":\"Account lookup\",\"error\":{\"code\":3060002,\"name\":\"account_query_exception\",\"what\":\"Account Query Exception\",\"details\":[{\"message\":\"Fail to retrieve account for server\",\"file\":\"chain_plugin.cpp\",\"line_number\":1540,\"method\":\"get_abi\"}]}}"
+}

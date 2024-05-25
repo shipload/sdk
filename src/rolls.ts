@@ -1,4 +1,4 @@
-import {Bytes, Checksum256Type, Checksum512} from '@wharfkit/antelope'
+import {Checksum256Type} from '@wharfkit/antelope'
 import {hashBytes} from './hash'
 
 export function roll(game_seed: Checksum256Type, roll_seed: string): number {

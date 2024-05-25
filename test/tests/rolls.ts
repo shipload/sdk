@@ -10,7 +10,7 @@ suite('roll', function () {
         const epochseed = '0202020202020202020202020202020202020202020202020202020202020202'
         const location = {x: 10, y: 20}
         const good_id = 1
-        const rollSeed: string = `${location.x}${epochseed}${location.y}${good_id}`
+        const rollSeed = `${location.x}${epochseed}${location.y}${good_id}`
         const rollValue = roll(seed, rollSeed)
         assert.equal(rollValue, 61436) // Adjust the expected value based on the correct calculation
     })

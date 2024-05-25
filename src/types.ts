@@ -1,4 +1,4 @@
-import {Checksum256Type, UInt64Type} from '@wharfkit/antelope'
+import {UInt16Type, UInt64Type} from '@wharfkit/antelope'
 
 export interface Coordinates {
     x: number
@@ -19,6 +19,7 @@ export interface Distance {
     destination: Coordinates
     distance: number
 }
+
 export interface Good {
     id: number
     name: string
@@ -28,29 +29,6 @@ export interface Good {
 }
 
 export interface GoodPrice {
-    good_id: number
+    id: UInt16Type
     price: UInt64Type
-}
-
-export interface StateData {
-    seed: Checksum256Type
-    epochseed: Checksum256Type
-}
-
-export interface Player {
-    balance: number
-}
-
-export interface Ship {
-    id: number
-    owner: string
-    location: Coordinates
-    traveling: boolean
-}
-
-export interface Cargo {
-    id: number
-    ship_id: number
-    good_id: number
-    quantity: number
 }

@@ -1,11 +1,11 @@
 import {Coordinates, GoodPrice} from './types'
 import {getGood, goods} from './goods'
-import {Checksum256Type, UInt64} from '@wharfkit/antelope'
+import {Checksum256Type, UInt16Type, UInt64} from '@wharfkit/antelope'
 import {roll} from './rolls'
 
 export async function marketprice(
     location: Coordinates,
-    good_id: number,
+    good_id: UInt16Type,
     gameSeed: Checksum256Type,
     epochSeed: Checksum256Type
 ): Promise<UInt64> {
@@ -23,7 +23,7 @@ export async function marketprices(
     return Promise.all(
         goods.map(async (good) => {
             const price = await marketprice(location, good.id, gameSeed, epochSeed)
-            return {price, good_id: good.id}
+            return {price, id: good.id}
         })
     )
 }
