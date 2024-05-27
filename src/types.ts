@@ -1,4 +1,4 @@
-import {UInt16Type, UInt64Type} from '@wharfkit/antelope'
+import {UInt16, UInt64} from '@wharfkit/antelope'
 
 export interface Coordinates {
     x: number
@@ -21,14 +21,14 @@ export interface Distance {
 }
 
 export interface Good {
-    id: number
+    id: UInt16
     name: string
     description: string
-    base_price: number
-    mass: number
+    base_price: UInt64
+    mass: UInt64
 }
 
 export interface GoodPrice {
-    id: UInt16Type
-    price: UInt64Type
+    id: UInt16
+    price: UInt64
 }

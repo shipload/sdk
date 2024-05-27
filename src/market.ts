@@ -1,6 +1,6 @@
 import {Coordinates, GoodPrice} from './types'
 import {getGood, goods} from './goods'
-import {Checksum256Type, UInt16Type, UInt64} from '@wharfkit/antelope'
+import {Checksum256Type, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelope'
 import {roll} from './rolls'
 
 export async function marketprice(
@@ -28,7 +28,8 @@ export async function marketprices(
     )
 }
 
-export function priceFromRoll(basePrice: number, roll: number): UInt64 {
+export function priceFromRoll(basePrice: UInt64Type, roll: number): UInt64 {
+    basePrice = Number(basePrice)
     let price: number
     if (roll < 13) {
         price = basePrice * 2.25 // ~0.02% chance

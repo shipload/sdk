@@ -42,7 +42,7 @@ suite('Shipload', function () {
             assert.equal(prices.length, onChainMarketPrices.length)
             prices.forEach((price, index) => {
                 assert.isTrue(price.price.equals(onChainMarketPrices[index].price))
-                assert.equal(price.id, onChainMarketPrices[index].id.toNumber())
+                assert(price.id.equals(onChainMarketPrices[index].id))
             })
         })
     })

@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {Coordinates, marketprice, marketprices, priceFromRoll} from '$lib'
-import {Checksum256Type} from '@wharfkit/antelope'
+import {Checksum256Type, UInt16} from '@wharfkit/antelope'
 
 suite('market', function () {
     suite('marketprice', function () {
@@ -25,7 +25,7 @@ suite('market', function () {
             assert(prices.length > 0)
 
             assert.deepEqual(
-                prices.map(({price, id}) => ({price: price.toNumber(), id})),
+                prices.map(({price, id}) => ({price: Number(price), id: Number(id)})),
                 [
                     {
                         id: 1,
