@@ -1,6 +1,7 @@
 import {makeClient} from '@wharfkit/mock-data'
 import {ServerContract} from '$lib'
 import {Serializer} from '@wharfkit/antelope'
+import {assert} from 'chai'
 
 const client = makeClient('https://jungle4.greymass.com')
 const server = new ServerContract.Contract({client})

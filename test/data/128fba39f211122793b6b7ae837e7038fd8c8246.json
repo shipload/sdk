@@ -1,0 +1,50 @@
+{
+    "request": {
+        "path": "https://jungle4.greymass.com/v1/chain/send_read_only_transaction",
+        "params": {
+            "method": "POST",
+            "body": "{\"transaction\":{\"signatures\":[],\"compression\":1,\"packed_context_free_data\":\"789c63000000010001\",\"packed_trx\":\"789c636040068c202266ebfa430c0c1d59b3671b8731483032a00226180300b35c0550\"}}",
+            "headers": {}
+        }
+    },
+    "status": 200,
+    "json": {
+        "transaction_id": "a9ad45a67621cb8a37ec3d5fe3093e3cb2008d0cc662fec1c58ceafb2bd79724",
+        "processed": {
+            "id": "a9ad45a67621cb8a37ec3d5fe3093e3cb2008d0cc662fec1c58ceafb2bd79724",
+            "block_num": 141469857,
+            "block_time": "2024-05-24T00:32:15.500",
+            "producer_block_id": null,
+            "receipt": null,
+            "elapsed": 48,
+            "net_usage": 0,
+            "scheduled": false,
+            "action_traces": [],
+            "account_ram_delta": null,
+            "except": {
+                "code": 3040000,
+                "name": "transaction_exception",
+                "message": "Transaction exception",
+                "stack": [
+                    {
+                        "context": {
+                            "level": "error",
+                            "file": "transaction_context.cpp",
+                            "line": 805,
+                            "method": "validate_referenced_accounts",
+                            "hostname": "",
+                            "thread_name": "read-3",
+                            "timestamp": "2024-05-24T00:32:14.916"
+                        },
+                        "format": "action's code account '${account}' does not exist",
+                        "data": {
+                            "account": "server"
+                        }
+                    }
+                ]
+            },
+            "error_code": "10000000000000000000"
+        }
+    },
+    "text": "{\"transaction_id\":\"a9ad45a67621cb8a37ec3d5fe3093e3cb2008d0cc662fec1c58ceafb2bd79724\",\"processed\":{\"id\":\"a9ad45a67621cb8a37ec3d5fe3093e3cb2008d0cc662fec1c58ceafb2bd79724\",\"block_num\":141469857,\"block_time\":\"2024-05-24T00:32:15.500\",\"producer_block_id\":null,\"receipt\":null,\"elapsed\":48,\"net_usage\":0,\"scheduled\":false,\"action_traces\":[],\"account_ram_delta\":null,\"except\":{\"code\":3040000,\"name\":\"transaction_exception\",\"message\":\"Transaction exception\",\"stack\":[{\"context\":{\"level\":\"error\",\"file\":\"transaction_context.cpp\",\"line\":805,\"method\":\"validate_referenced_accounts\",\"hostname\":\"\",\"thread_name\":\"read-3\",\"timestamp\":\"2024-05-24T00:32:14.916\"},\"format\":\"action's code account '${account}' does not exist\",\"data\":{\"account\":\"server\"}}]},\"error_code\":\"10000000000000000000\"}}"
+}

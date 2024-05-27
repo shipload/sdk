@@ -15,6 +15,6 @@ suite('hash', function () {
         const result = await server.readonly('hash', {
             value,
         })
-        assert.equal(result, hash(state.seed, value))
+        assert.equal(result, String(hash(state.seed, value)))
     })
 })
