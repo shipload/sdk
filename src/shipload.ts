@@ -37,11 +37,14 @@ export class Shipload {
             : new ServerContract.Contract({client: this.client})
     }
 
-    static async load(chain: ChainDefinition, shiploadOptions: ShiploadOptions): Promise<Shipload> {
+    static async load(
+        chain: ChainDefinition,
+        shiploadOptions?: ShiploadOptions
+    ): Promise<Shipload> {
         let platform: Contract = new PlatformContract.Contract({
             client: new APIClient({url: chain.url}),
         })
-        if (shiploadOptions.platformContractName) {
+        if (shiploadOptions?.platformContractName) {
             const client = shiploadOptions.client || new APIClient({url: chain.url})
             const contractKit = new ContractKit({client})
             platform = await contractKit.load(shiploadOptions.platformContractName)
@@ -50,7 +53,7 @@ export class Shipload {
         let server: Contract = new ServerContract.Contract({
             client: new APIClient({url: chain.url}),
         })
-        if (shiploadOptions.serverContractName) {
+        if (shiploadOptions?.serverContractName) {
             const client = shiploadOptions.client || new APIClient({url: chain.url})
             const contractKit = new ContractKit({client})
             server = await contractKit.load(shiploadOptions.serverContractName)
