@@ -1,10 +1,11 @@
-import {APIClient, UInt64} from '@wharfkit/antelope'
-import {Coordinates, GoodPrice} from './types'
+import {APIClient, UInt16Type, UInt64} from '@wharfkit/antelope'
+import {Distance, GoodPrice} from './types'
 import {marketprice, marketprices} from './market'
 import {PlatformContract, ServerContract} from './contracts'
 import {ERROR_SYSTEM_NOT_INITIALIZED} from './errors'
 import {ChainDefinition} from '@wharfkit/session'
 import ContractKit, {Contract} from '@wharfkit/contract'
+import {findNearbyPlanets, hasPlanet} from './travel'
 
 interface ShiploadOptions {
     platformContractName?: string
@@ -82,15 +83,33 @@ export class Shipload {
         return state
     }
 
-    async marketprice(location: Coordinates, good_id: number): Promise<UInt64> {
+    async marketprice(
+        location: ServerContract.ActionParams.Type.coordinates,
+        good_id: number
+    ): Promise<UInt64> {
         const game = await this.getGame()
         const state = await this.getState()
         return marketprice(location, good_id, game.config.seed, state.seed)
     }
 
-    async marketprices(location: Coordinates): Promise<GoodPrice[]> {
+    async marketprices(
+        location: ServerContract.ActionParams.Type.coordinates
+    ): Promise<GoodPrice[]> {
         const game = await this.getGame()
         const state = await this.getState()
         return marketprices(location, game.config.seed, state.seed)
+    }
+
+    async hasPlanet(location: ServerContract.ActionParams.Type.coordinates): Promise<boolean> {
+        const game = await this.getGame()
+        return hasPlanet(game.config.seed, location)
+    }
+
+    async findNearbyPlanets(
+        origin: ServerContract.ActionParams.Type.coordinates,
+        maxDistance: UInt16Type = 20
+    ): Promise<Distance[]> {
+        const game = await this.getGame()
+        return findNearbyPlanets(game.config.seed, origin, maxDistance)
     }
 }

@@ -1,12 +1,7 @@
 import {UInt16, UInt64} from '@wharfkit/antelope'
 import {ServerContract} from './contracts'
 
-export interface Coordinates {
-    x: number
-    y: number
-}
-
-export interface CameraPosition extends Coordinates {
+export interface CameraPosition extends ServerContract.ActionParams.Type.coordinates {
     z: number
 }
 

@@ -1,11 +1,11 @@
 import {assert} from 'chai'
-import {Coordinates, marketprice, marketprices, priceFromRoll} from '$lib'
+import {ServerContract, marketprice, marketprices, priceFromRoll} from '$lib'
 import {Checksum256Type, UInt16} from '@wharfkit/antelope'
 
 suite('market', function () {
     suite('marketprice', function () {
         test('SDK output matches API', async function () {
-            const location: Coordinates = {x: 10, y: 20}
+            const location: ServerContract.ActionParams.Type.coordinates = {x: 10, y: 20}
             const good_id = 1
             const gameSeed: Checksum256Type = 'gameSeedSample'
             const epochSeed: Checksum256Type = 'epochSeedSample'
@@ -17,7 +17,7 @@ suite('market', function () {
 
     suite('marketprices', function () {
         test('SDK output matches API', async function () {
-            const location: Coordinates = {x: 10, y: 20}
+            const location: ServerContract.ActionParams.Type.coordinates = {x: 10, y: 20}
             const gameSeed: Checksum256Type = 'gameSeedSample'
             const epochSeed: Checksum256Type = 'epochSeedSample'
             const prices = await marketprices(location, gameSeed, epochSeed)
