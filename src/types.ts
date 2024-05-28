@@ -1,4 +1,5 @@
 import {UInt16, UInt64} from '@wharfkit/antelope'
+import {ServerContract} from './contracts'
 
 export interface Coordinates {
     x: number
@@ -15,9 +16,9 @@ export interface Dimensions {
 }
 
 export interface Distance {
-    origin: Coordinates
-    destination: Coordinates
-    distance: number
+    origin: ServerContract.ActionParams.Type.coordinates
+    destination: ServerContract.ActionParams.Type.coordinates
+    distance: UInt16
 }
 
 export interface Good {
