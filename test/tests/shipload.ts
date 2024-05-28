@@ -4,7 +4,8 @@ import Shipload, {Coordinates, ServerContract} from '$lib'
 import {Chains} from '@wharfkit/common'
 
 const client = makeClient('https://jungle4.greymass.com')
-const contractName = 'shipload.gm'
+const platformContractName = 'platform.gm'
+const serverContractName = 'shipload.gm'
 
 const server = new ServerContract.Contract({client})
 
@@ -12,7 +13,11 @@ suite('Shipload', function () {
     let shipload: Shipload
 
     setup(async () => {
-        shipload = await Shipload.load(Chains.Jungle4, {client, contractName})
+        shipload = await Shipload.load(Chains.Jungle4, {
+            client,
+            platformContractName,
+            serverContractName,
+        })
     })
 
     suite('marketprice', function () {

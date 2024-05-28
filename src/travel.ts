@@ -1,7 +1,7 @@
 import {Checksum256, Int64, UInt16, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelope'
 
 import {ServerContract} from './contracts'
-import {hash} from './hash'
+import {hash512} from './hash'
 import {Distance} from './types'
 
 export function distanceTraveled(ship: ServerContract.Types.ship_row): number {
@@ -53,7 +53,7 @@ export function hasPlanet(
     coordinates: ServerContract.ActionParams.Type.coordinates
 ): boolean {
     const str = ['system', coordinates.x, coordinates.y].join('-')
-    return String(hash(seed, str)).slice(0, 2) === '00'
+    return String(hash512(seed, str)).slice(0, 2) === '00'
 }
 
 export function findNearbyPlanets(

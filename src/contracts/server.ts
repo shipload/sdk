@@ -24,12 +24,17 @@ import {
 import type {ActionOptions, ContractArgs, PartialBy, Table} from '@wharfkit/contract'
 import {Contract as BaseContract} from '@wharfkit/contract'
 export const abiBlob = Blob.from(
-    'DmVvc2lvOjphYmkvMS4yABwHYWR2YW5jZQAABmFycml2ZQACBW93bmVyBG5hbWUCaWQGdWludDY0CGJ1eWdvb2RzAAMHc2hpcF9pZAZ1aW50NjQHZ29vZF9pZAZ1aW50NjQIcXVhbnRpdHkGdWludDY0CWNhcmdvX3JvdwAFAmlkBnVpbnQ2NAdzaGlwX2lkBnVpbnQ2NAdnb29kX2lkBnVpbnQ2NAhxdWFudGl0eQZ1aW50NjQGbG9hZGVkBnVpbnQ2NApjbGVhcnRhYmxlAAMKdGFibGVfbmFtZQRuYW1lBXNjb3BlBW5hbWU/CG1heF9yb3dzB3VpbnQ2ND8LY29vcmRpbmF0ZXMAAgF4BWludDY0AXkFaW50NjQGZW5hYmxlAAEHZW5hYmxlZARib29sCWVzdHRyYXZlbAACAmlkBnVpbnQ2NAtkZXN0aW5hdGlvbgtjb29yZGluYXRlcwpnb29kX3ByaWNlAAICaWQGdWludDE2BXByaWNlBnVpbnQ2NARoYXNoAAEFdmFsdWUGc3RyaW5nBGluaXQAAgRzZWVkC2NoZWNrc3VtMjU2CWVwb2Noc2VlZAtjaGVja3N1bTI1NgRqb2luAAEHYWNjb3VudARuYW1lDGxvYWRlcl9zdGF0cwAECGNhcGFjaXR5BnVpbnQxNgRtYXNzBnVpbnQzMghxdWFudGl0eQZ1aW50MTYGdGhydXN0BnVpbnQzMgttYXJrZXRwcmljZQACCGxvY2F0aW9uC2Nvb3JkaW5hdGVzB2dvb2RfaWQGdWludDE2DG1hcmtldHByaWNlcwABCGxvY2F0aW9uC2Nvb3JkaW5hdGVzCnBsYXllcl9yb3cAAwVvd25lcgRuYW1lB2JhbGFuY2UGdWludDY0BGRlYnQGdWludDY0CXNlbGxnb29kcwADB3NoaXBfaWQGdWludDY0B2dvb2RfaWQGdWludDY0CHF1YW50aXR5BnVpbnQ2NAxzZXF1ZW5jZV9yb3cAAgNrZXkEbmFtZQV2YWx1ZQZ1aW50NjQIc2hpcF9yb3cACgJpZAZ1aW50NjQFb3duZXIEbmFtZQRuYW1lBnN0cmluZwhsb2NhdGlvbgtjb29yZGluYXRlcwRza2luBXVpbnQ4BHRpZXIFdWludDgFc3RhdGUKc2hpcF9zdGF0ZQVzdGF0cwpzaGlwX3N0YXRzB2xvYWRlcnMMbG9hZGVyX3N0YXRzCnRyYXZlbHBsYW4MdHJhdmVsX3BsYW4/CnNoaXBfc3RhdGUAAQZlbmVyZ3kGdWludDMyCnNoaXBfc3RhdHMABghjYXBhY2l0eQZ1aW50MzIFZHJhaW4GdWludDMyBG1hc3MGdWludDY0BW9yYml0BnVpbnQxNghyZWNoYXJnZQZ1aW50MzIGdGhydXN0BnVpbnQ2NAlzdGF0ZV9yb3cABQdlbmFibGVkBGJvb2wFZXBvY2gGdWludDY0CWVwb2Noc2VlZAtjaGVja3N1bTI1NgdnZW5lc2lzFGJsb2NrX3RpbWVzdGFtcF90eXBlBHNlZWQLY2hlY2tzdW0yNTYLc3VtbWFyeV9yb3cAAgNrZXkEbmFtZQV2YWx1ZQ50cmF2ZWxfc3VtbWFyeQR0ZXN0AAEEZGF0YQZzdHJpbmcGdHJhdmVsAAQFb3duZXIEbmFtZQJpZAZ1aW50NjQLZGVzdGluYXRpb24LY29vcmRpbmF0ZXMIcmVjaGFyZ2UEYm9vbAt0cmF2ZWxfcGxhbgADC2Rlc3RpbmF0aW9uC2Nvb3JkaW5hdGVzCWRlcGFydHVyZQp0aW1lX3BvaW50CGR1cmF0aW9uBnVpbnQzMg50cmF2ZWxfc3VtbWFyeQAMBXN0YXRzCnNoaXBfc3RhdHMHbG9hZGVycwxsb2FkZXJfc3RhdHMGb3JpZ2luC2Nvb3JkaW5hdGVzC2Rlc3RpbmF0aW9uC2Nvb3JkaW5hdGVzCGRpc3RhbmNlBnVpbnQ2NAl0b3RhbG1hc3MGdWludDY0DGFjY2VsZXJhdGlvbgZ1aW50NjQKZmxpZ2h0dGltZQZ1aW50NjQLZW5lcmd5dXNhZ2UGdWludDY0DHJlY2hhcmdldGltZQZ1aW50NjQIbG9hZHRpbWUGdWludDY0BHRpbWUGdWludDY0BHdpcGUAAA8AAABAoWl2MgdhZHZhbmNl0wEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogYWR2YW5jZQpzdW1tYXJ5OiAnQWR2YW5jZSB0dXJuJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpBZHZhbmNlIHRoZSBnYW1lIHRvIHRoZSBuZXh0IHR1cm4uAAAAAKjt7jUGYXJyaXZlswItLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogYXJyaXZlCnN1bW1hcnk6ICdDb21wbGV0ZSB0cmF2ZWwnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkNvbXBsZXRlIHRoZSB0cmF2ZWwgb2YgYSBzaGlwIGJ5IHVwZGF0aW5nIGl0cyBsb2NhdGlvbiB0byB0aGUgZGVzdGluYXRpb24gY29vcmRpbmF0ZXMgYWZ0ZXIgdGhlIHRyYXZlbCBkdXJhdGlvbiBoYXMgcGFzc2VkLgoKLS0tAAAAOFHKvD4IYnV5Z29vZHPdAS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBidXlnb29kcwpzdW1tYXJ5OiAnQnV5IGdvb2RzJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpQdXJjaGFzZSBnb29kcyBhbmQgYWRkIHRoZW0gdG8gYSBzaGlwJ3MgY2FyZ28uAICKx+RrVEQKY2xlYXJ0YWJsZb4BLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IGNsZWFydGFibGUKc3VtbWFyeTogJ0RFQlVHOiBjbGVhcnRhYmxlIGFjdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQAAAACoeMxUBmVuYWJsZeIBLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IGVuYWJsZQpzdW1tYXJ5OiAnU2V0IGVuYWJsZWQgc3RhdGUnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkVuYWJsZSBvciBkaXNhYmxlIHRoaXMgZ2FtZSBvZiBTaGlwbG9hZC4KCi0tLQAAiGqbmzNWCWVzdHRyYXZlbAAAAAAAANCwaQRoYXNo6gEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogaGFzaApzdW1tYXJ5OiAnQ2FsY3VsYXRlIGhhc2gnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkNhbGN1bGF0ZXMgdGhlIGhhc2ggb2YgYSBzdHJpbmcgYmFzZWQgdXNpbmcgdGhlIGdhbWUgc2VlZC4AAAAAAJDddARpbml0/wEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogaW5pdApzdW1tYXJ5OiAnSW5pdGlhbGl6ZSBnYW1lIHNlZWQnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkluaXRpYWxpemUgYSB0aGUgZ2FtZXMgc2VlZCBhbmQgZXBvY2hzZWVkIHZhbHVlcyB0byBib290c3RyYXAgZ2FtZSBzdGF0ZS4AAAAAADAdfQRqb2luyQEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogam9pbgpzdW1tYXJ5OiAnSm9pbiBhIGdhbWUnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkpvaW4gYSBnYW1lIG9mIFNoaXBsb2FkCgotLS0AFHK3ZgWvkQttYXJrZXRwcmljZZsCLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IG1hcmtldHByaWNlCnN1bW1hcnk6ICdHZXQgcHJpY2Ugb2YgZ29vZCBhdCBsb2NhdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKVGhpcyBhY3Rpb24gZGV0ZXJtaW5lcyB0aGUgbWFya2V0IHByaWNlIG9mIGEgc3BlY2lmaWVkIGdvb2QgYXQgYSBnaXZlbiBsb2NhdGlvbi4KCi0tLYAVcrdmBa+RDG1hcmtldHByaWNlc5UCLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IG1hcmtldHByaWNlcwpzdW1tYXJ5OiAnR2V0IHByaWNlIG9mIGFsbCBnb29kcyBhdCBsb2NhdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKVGhpcyBhY3Rpb24gZGV0ZXJtaW5lcyB0aGUgbWFya2V0IHByaWNlIG9mIGFsbCBnb29kcyBhdCBhIGdpdmVuIGxvY2F0aW9uLgAAwIlSFqPCCXNlbGxnb29kc9UBLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IHNlbGxnb29kcwpzdW1tYXJ5OiAnU2VsbCBnb29kcycKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKU2VsbCBnb29kcyBmcm9tIGEgc2hpcCdzIGNhcmdvLgoKLS0tAAAAAACQscoEdGVzdLIBLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IHRlc3QKc3VtbWFyeTogJ0RFQlVHOiB0ZXN0IGFjdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQAAAABEtc3NBnRyYXZlbP0BLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IHRyYXZlbApzdW1tYXJ5OiAnTW92ZSBhIHNoaXAnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkluaXRpYXRlIHRyYXZlbCBvZiBhIHNoaXAgZnJvbSBpdHMgY3VycmVudCBsb2NhdGlvbiB0byBhIG5ldyBkZXN0aW5hdGlvbi4KCi0tLQAAAAAAoKrjBHdpcGWyAS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiB3aXBlCnN1bW1hcnk6ICdERUJVRzogd2lwZSBhY3Rpb24nCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0GAAAAAADKrkEDaTY0AAAJY2FyZ29fcm93AAAAAFzlTawDaTY0AAAKcGxheWVyX3JvdwAAAApNpa3CA2k2NAAADHNlcXVlbmNlX3JvdwAAAAAAUF3DA2k2NAAACHNoaXBfcm93AAAAAACVTcYDaTY0AAAJc3RhdGVfcm93AAAAwF8jpcYDaTY0AAALc3VtbWFyeV9yb3cBEVNoaXBsb2FkIChTZXJ2ZXIpEVNoaXBsb2FkIChTZXJ2ZXIpAAAABAAAiGqbmzNWDnRyYXZlbF9zdW1tYXJ5AAAAAADQsGkLY2hlY2tzdW01MTIAFHK3ZgWvkQpnb29kX3ByaWNlgBVyt2YFr5EMZ29vZF9wcmljZVtd'
+    'DmVvc2lvOjphYmkvMS4yAB0HYWR2YW5jZQACBnJldmVhbAZzdHJpbmcGY29tbWl0C2NoZWNrc3VtMjU2BmFycml2ZQACBW93bmVyBG5hbWUCaWQGdWludDY0CGJ1eWdvb2RzAAMHc2hpcF9pZAZ1aW50NjQHZ29vZF9pZAZ1aW50NjQIcXVhbnRpdHkGdWludDY0CWNhcmdvX3JvdwAFAmlkBnVpbnQ2NAdzaGlwX2lkBnVpbnQ2NAdnb29kX2lkBnVpbnQ2NAhxdWFudGl0eQZ1aW50MTYGbG9hZGVkBnVpbnQxNgpjbGVhcnRhYmxlAAMKdGFibGVfbmFtZQRuYW1lBXNjb3BlBW5hbWU/CG1heF9yb3dzB3VpbnQ2ND8GY29tbWl0AAEGY29tbWl0C2NoZWNrc3VtMjU2C2Nvb3JkaW5hdGVzAAIBeAVpbnQ2NAF5BWludDY0BmVuYWJsZQABB2VuYWJsZWQEYm9vbApnb29kX3ByaWNlAAICaWQGdWludDE2BXByaWNlBnVpbnQ2NARoYXNoAAEFdmFsdWUGc3RyaW5nB2hhc2g1MTIAAQV2YWx1ZQZzdHJpbmcEaW5pdAABBHNlZWQLY2hlY2tzdW0yNTYEam9pbgABB2FjY291bnQEbmFtZQxsb2FkZXJfc3RhdHMAAwRtYXNzBnVpbnQzMghxdWFudGl0eQZ1aW50MTYGdGhydXN0BnVpbnQzMgttYXJrZXRwcmljZQACCGxvY2F0aW9uC2Nvb3JkaW5hdGVzB2dvb2RfaWQGdWludDE2DG1hcmtldHByaWNlcwABCGxvY2F0aW9uC2Nvb3JkaW5hdGVzCnBsYXllcl9yb3cAAwVvd25lcgRuYW1lB2JhbGFuY2UGdWludDY0BGRlYnQGdWludDY0BHNhbHQAAQRzYWx0BnVpbnQ2NAlzZWxsZ29vZHMAAwdzaGlwX2lkBnVpbnQ2NAdnb29kX2lkBnVpbnQ2NAhxdWFudGl0eQZ1aW50NjQMc2VxdWVuY2Vfcm93AAIDa2V5BG5hbWUFdmFsdWUGdWludDY0CHNoaXBfcm93AAoCaWQGdWludDY0BW93bmVyBG5hbWUEbmFtZQZzdHJpbmcIbG9jYXRpb24LY29vcmRpbmF0ZXMEc2tpbgV1aW50OAR0aWVyBXVpbnQ4BXN0YXRlCnNoaXBfc3RhdGUFc3RhdHMKc2hpcF9zdGF0cwdsb2FkZXJzDGxvYWRlcl9zdGF0cwp0cmF2ZWxwbGFuDHRyYXZlbF9wbGFuPwpzaGlwX3N0YXRlAAEGZW5lcmd5BnVpbnQzMgpzaGlwX3N0YXRzAAYIY2FwYWNpdHkGdWludDMyBWRyYWluBnVpbnQzMgRtYXNzBnVpbnQ2NAVvcmJpdAZ1aW50MTYIcmVjaGFyZ2UGdWludDMyBnRocnVzdAZ1aW50NjQJc3RhdGVfcm93AAYHZW5hYmxlZARib29sBWVwb2NoBnVpbnQ2NARzYWx0BnVpbnQ2NARzZWVkC2NoZWNrc3VtMjU2BmNvbW1pdAtjaGVja3N1bTI1NgdnZW5lc2lzFGJsb2NrX3RpbWVzdGFtcF90eXBlBnRyYXZlbAAEBW93bmVyBG5hbWUCaWQGdWludDY0C2Rlc3RpbmF0aW9uC2Nvb3JkaW5hdGVzCHJlY2hhcmdlBGJvb2wLdHJhdmVsX3BsYW4AAwtkZXN0aW5hdGlvbgtjb29yZGluYXRlcwlkZXBhcnR1cmUKdGltZV9wb2ludAhkdXJhdGlvbgZ1aW50MzIOdHJhdmVsX3N1bW1hcnkADAVzdGF0cwpzaGlwX3N0YXRzB2xvYWRlcnMMbG9hZGVyX3N0YXRzBm9yaWdpbgtjb29yZGluYXRlcwtkZXN0aW5hdGlvbgtjb29yZGluYXRlcwhkaXN0YW5jZQZ1aW50NjQJdG90YWxtYXNzBnVpbnQ2NAxhY2NlbGVyYXRpb24GdWludDY0CmZsaWdodHRpbWUGdWludDY0C2VuZXJneXVzYWdlBnVpbnQ2NAxyZWNoYXJnZXRpbWUGdWludDY0CGxvYWR0aW1lBnVpbnQ2NAR0aW1lBnVpbnQ2NAp0cmF2ZWx0aW1lAAICaWQGdWludDY0C2Rlc3RpbmF0aW9uC2Nvb3JkaW5hdGVzBHdpcGUAABEAAABAoWl2MgdhZHZhbmNl0wEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogYWR2YW5jZQpzdW1tYXJ5OiAnQWR2YW5jZSB0dXJuJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpBZHZhbmNlIHRoZSBnYW1lIHRvIHRoZSBuZXh0IHR1cm4uAAAAAKjt7jUGYXJyaXZlswItLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogYXJyaXZlCnN1bW1hcnk6ICdDb21wbGV0ZSB0cmF2ZWwnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkNvbXBsZXRlIHRoZSB0cmF2ZWwgb2YgYSBzaGlwIGJ5IHVwZGF0aW5nIGl0cyBsb2NhdGlvbiB0byB0aGUgZGVzdGluYXRpb24gY29vcmRpbmF0ZXMgYWZ0ZXIgdGhlIHRyYXZlbCBkdXJhdGlvbiBoYXMgcGFzc2VkLgoKLS0tAAAAOFHKvD4IYnV5Z29vZHPdAS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBidXlnb29kcwpzdW1tYXJ5OiAnQnV5IGdvb2RzJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpQdXJjaGFzZSBnb29kcyBhbmQgYWRkIHRoZW0gdG8gYSBzaGlwJ3MgY2FyZ28uAICKx+RrVEQKY2xlYXJ0YWJsZb4BLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IGNsZWFydGFibGUKc3VtbWFyeTogJ0RFQlVHOiBjbGVhcnRhYmxlIGFjdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQAAAABkJyVFBmNvbW1pdPEBLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IGNvbW1pdApzdW1tYXJ5OiAnU2V0IGNvbW1pdCB2YWx1ZScKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKU2V0IHRoZSBpbml0aWFsIGNvbW1pdCB2YWx1ZSBkdXJpbmcgZ2FtZSBpbml0aWFsaXphdGlvbi4KCi0tLQAAAACoeMxUBmVuYWJsZeIBLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IGVuYWJsZQpzdW1tYXJ5OiAnU2V0IGVuYWJsZWQgc3RhdGUnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkVuYWJsZSBvciBkaXNhYmxlIHRoaXMgZ2FtZSBvZiBTaGlwbG9hZC4KCi0tLQAAAAAA0LBpBGhhc2j9AS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBoYXNoCnN1bW1hcnk6ICdDYWxjdWxhdGUgc2hhMjU2IGhhc2gnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkNhbGN1bGF0ZXMgdGhlIHNoYTI1NiBoYXNoIG9mIGEgc3RyaW5nIGJhc2VkIHVzaW5nIHRoZSBnYW1lIHNlZWQuCgotLS0AAABAhNKwaQdoYXNoNTEy+wEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogaGFzaDUxMgpzdW1tYXJ5OiAnQ2FsY3VsYXRlIHNoYTUxMiBoYXNoJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpDYWxjdWxhdGVzIHRoZSBzaGE1MTIgaGFzaCBvZiBhIHN0cmluZyBiYXNlZCB1c2luZyB0aGUgZ2FtZSBzZWVkLgAAAAAAkN10BGluaXT6AS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBpbml0CnN1bW1hcnk6ICdJbml0aWFsaXplIGdhbWUgc2VlZCcKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKSW5pdGlhbGl6ZSBhIHRoZSBnYW1lcyBzZWVkIGFuZCBzZWVkIHZhbHVlcyB0byBib290c3RyYXAgZ2FtZSBzdGF0ZS4AAAAAADAdfQRqb2luyQEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogam9pbgpzdW1tYXJ5OiAnSm9pbiBhIGdhbWUnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkpvaW4gYSBnYW1lIG9mIFNoaXBsb2FkCgotLS0AFHK3ZgWvkQttYXJrZXRwcmljZZsCLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IG1hcmtldHByaWNlCnN1bW1hcnk6ICdHZXQgcHJpY2Ugb2YgZ29vZCBhdCBsb2NhdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKVGhpcyBhY3Rpb24gZGV0ZXJtaW5lcyB0aGUgbWFya2V0IHByaWNlIG9mIGEgc3BlY2lmaWVkIGdvb2QgYXQgYSBnaXZlbiBsb2NhdGlvbi4KCi0tLYAVcrdmBa+RDG1hcmtldHByaWNlc5UCLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IG1hcmtldHByaWNlcwpzdW1tYXJ5OiAnR2V0IHByaWNlIG9mIGFsbCBnb29kcyBhdCBsb2NhdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKVGhpcyBhY3Rpb24gZGV0ZXJtaW5lcyB0aGUgbWFya2V0IHByaWNlIG9mIGFsbCBnb29kcyBhdCBhIGdpdmVuIGxvY2F0aW9uLgAAAAAAkKPBBHNhbHTdAS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiBzYWx0CnN1bW1hcnk6ICdBcHBlbmQgU2FsdCcKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQoKQWRkIGFkZGl0aW9uYWwgc2FsdCB0byB0aGUgbmV4dCBlcG9jaCBzZWVkLgoKLS0tAADAiVIWo8IJc2VsbGdvb2Rz1QEtLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogc2VsbGdvb2RzCnN1bW1hcnk6ICdTZWxsIGdvb2RzJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpTZWxsIGdvb2RzIGZyb20gYSBzaGlwJ3MgY2FyZ28uCgotLS0AAAAARLXNzQZ0cmF2ZWz9AS0tLQoKc3BlY192ZXJzaW9uOiAiMC4yLjAiCnRpdGxlOiB0cmF2ZWwKc3VtbWFyeTogJ01vdmUgYSBzaGlwJwppY29uOiBodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTQ3MjkyODYxP3M9NDAwJnU9M2IxYWY2NmU5MGRkODUxZjRkN2MwOTZlZDZhMmZiYjRiOWUxOTBkYQoKLS0tCgpJbml0aWF0ZSB0cmF2ZWwgb2YgYSBzaGlwIGZyb20gaXRzIGN1cnJlbnQgbG9jYXRpb24gdG8gYSBuZXcgZGVzdGluYXRpb24uCgotLS0AgJIuR7XNzQp0cmF2ZWx0aW1ljAItLS0KCnNwZWNfdmVyc2lvbjogIjAuMi4wIgp0aXRsZTogdHJhdmVsdGltZQpzdW1tYXJ5OiAnRXN0aW1hdGUgVHJhdmVsIFRpbWUnCmljb246IGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xNDcyOTI4NjE/cz00MDAmdT0zYjFhZjY2ZTkwZGQ4NTFmNGQ3YzA5NmVkNmEyZmJiNGI5ZTE5MGRhCgotLS0KCkVzdGltYXRlIHRoZSBkdXJhdGlvbiBvZiBhIHNoaXAgdHJhdmVsaW5nIHdpdGhvdXQgY29tbWl0dGluZyB0byB0aGUgYWN0aW9uLgoKLS0tAAAAAACgquMEd2lwZbIBLS0tCgpzcGVjX3ZlcnNpb246ICIwLjIuMCIKdGl0bGU6IHdpcGUKc3VtbWFyeTogJ0RFQlVHOiB3aXBlIGFjdGlvbicKaWNvbjogaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzE0NzI5Mjg2MT9zPTQwMCZ1PTNiMWFmNjZlOTBkZDg1MWY0ZDdjMDk2ZWQ2YTJmYmI0YjllMTkwZGEKCi0tLQUAAAAAAMquQQNpNjQAAAljYXJnb19yb3cAAAAAXOVNrANpNjQAAApwbGF5ZXJfcm93AAAACk2lrcIDaTY0AAAMc2VxdWVuY2Vfcm93AAAAAABQXcMDaTY0AAAIc2hpcF9yb3cAAAAAAJVNxgNpNjQAAAlzdGF0ZV9yb3cBEVNoaXBsb2FkIChTZXJ2ZXIpEVNoaXBsb2FkIChTZXJ2ZXIpAAAABQAAAAAA0LBpC2NoZWNrc3VtMjU2AAAAQITSsGkLY2hlY2tzdW01MTIAFHK3ZgWvkQpnb29kX3ByaWNlgBVyt2YFr5EMZ29vZF9wcmljZVtdAICSLke1zc0OdHJhdmVsX3N1bW1hcnk='
 )
 export const abi = ABI.from(abiBlob)
 export namespace Types {
     @Struct.type('advance')
-    export class advance extends Struct {}
+    export class advance extends Struct {
+        @Struct.field('string')
+        reveal!: string
+        @Struct.field(Checksum256)
+        commit!: Checksum256
+    }
     @Struct.type('arrive')
     export class arrive extends Struct {
         @Struct.field(Name)
@@ -54,10 +59,10 @@ export namespace Types {
         ship_id!: UInt64
         @Struct.field(UInt64)
         good_id!: UInt64
-        @Struct.field(UInt64)
-        quantity!: UInt64
-        @Struct.field(UInt64)
-        loaded!: UInt64
+        @Struct.field(UInt16)
+        quantity!: UInt16
+        @Struct.field(UInt16)
+        loaded!: UInt16
     }
     @Struct.type('cleartable')
     export class cleartable extends Struct {
@@ -67,6 +72,11 @@ export namespace Types {
         scope?: Name
         @Struct.field(UInt64, {optional: true})
         max_rows?: UInt64
+    }
+    @Struct.type('commit')
+    export class commit extends Struct {
+        @Struct.field(Checksum256)
+        commit!: Checksum256
     }
     @Struct.type('coordinates')
     export class coordinates extends Struct {
@@ -80,13 +90,6 @@ export namespace Types {
         @Struct.field('bool')
         enabled!: boolean
     }
-    @Struct.type('esttravel')
-    export class esttravel extends Struct {
-        @Struct.field(UInt64)
-        id!: UInt64
-        @Struct.field(coordinates)
-        destination!: coordinates
-    }
     @Struct.type('good_price')
     export class good_price extends Struct {
         @Struct.field(UInt16)
@@ -99,12 +102,15 @@ export namespace Types {
         @Struct.field('string')
         value!: string
     }
+    @Struct.type('hash512')
+    export class hash512 extends Struct {
+        @Struct.field('string')
+        value!: string
+    }
     @Struct.type('init')
     export class init extends Struct {
         @Struct.field(Checksum256)
         seed!: Checksum256
-        @Struct.field(Checksum256)
-        epochseed!: Checksum256
     }
     @Struct.type('join')
     export class join extends Struct {
@@ -113,8 +119,6 @@ export namespace Types {
     }
     @Struct.type('loader_stats')
     export class loader_stats extends Struct {
-        @Struct.field(UInt16)
-        capacity!: UInt16
         @Struct.field(UInt32)
         mass!: UInt32
         @Struct.field(UInt16)
@@ -142,6 +146,11 @@ export namespace Types {
         balance!: UInt64
         @Struct.field(UInt64)
         debt!: UInt64
+    }
+    @Struct.type('salt')
+    export class salt extends Struct {
+        @Struct.field(UInt64)
+        salt!: UInt64
     }
     @Struct.type('sellgoods')
     export class sellgoods extends Struct {
@@ -217,12 +226,25 @@ export namespace Types {
         enabled!: boolean
         @Struct.field(UInt64)
         epoch!: UInt64
-        @Struct.field(Checksum256)
-        epochseed!: Checksum256
-        @Struct.field(BlockTimestamp)
-        genesis!: BlockTimestamp
+        @Struct.field(UInt64)
+        salt!: UInt64
         @Struct.field(Checksum256)
         seed!: Checksum256
+        @Struct.field(Checksum256)
+        commit!: Checksum256
+        @Struct.field(BlockTimestamp)
+        genesis!: BlockTimestamp
+    }
+    @Struct.type('travel')
+    export class travel extends Struct {
+        @Struct.field(Name)
+        owner!: Name
+        @Struct.field(UInt64)
+        id!: UInt64
+        @Struct.field(coordinates)
+        destination!: coordinates
+        @Struct.field('bool')
+        recharge!: boolean
     }
     @Struct.type('travel_summary')
     export class travel_summary extends Struct {
@@ -251,28 +273,12 @@ export namespace Types {
         @Struct.field(UInt64)
         time!: UInt64
     }
-    @Struct.type('summary_row')
-    export class summary_row extends Struct {
-        @Struct.field(Name)
-        key!: Name
-        @Struct.field(travel_summary)
-        value!: travel_summary
-    }
-    @Struct.type('test')
-    export class test extends Struct {
-        @Struct.field('string')
-        data!: string
-    }
-    @Struct.type('travel')
-    export class travel extends Struct {
-        @Struct.field(Name)
-        owner!: Name
+    @Struct.type('traveltime')
+    export class traveltime extends Struct {
         @Struct.field(UInt64)
         id!: UInt64
         @Struct.field(coordinates)
         destination!: coordinates
-        @Struct.field('bool')
-        recharge!: boolean
     }
     @Struct.type('wipe')
     export class wipe extends Struct {}
@@ -283,7 +289,6 @@ export const TableMap = {
     sequence: Types.sequence_row,
     ship: Types.ship_row,
     state: Types.state_row,
-    summary: Types.summary_row,
 }
 export interface TableTypes {
     cargo: Types.cargo_row
@@ -291,7 +296,6 @@ export interface TableTypes {
     sequence: Types.sequence_row
     ship: Types.ship_row
     state: Types.state_row
-    summary: Types.summary_row
 }
 export type RowType<T> = T extends keyof TableTypes ? TableTypes[T] : any
 export type TableNames = keyof TableTypes
@@ -302,7 +306,10 @@ export namespace ActionParams {
             y: Int64Type
         }
     }
-    export interface advance {}
+    export interface advance {
+        reveal: string
+        commit: Checksum256Type
+    }
     export interface arrive {
         owner: NameType
         id: UInt64Type
@@ -317,19 +324,20 @@ export namespace ActionParams {
         scope?: NameType
         max_rows?: UInt64Type
     }
+    export interface commit {
+        commit: Checksum256Type
+    }
     export interface enable {
         enabled: boolean
-    }
-    export interface esttravel {
-        id: UInt64Type
-        destination: Type.coordinates
     }
     export interface hash {
         value: string
     }
+    export interface hash512 {
+        value: string
+    }
     export interface init {
         seed: Checksum256Type
-        epochseed: Checksum256Type
     }
     export interface join {
         account: NameType
@@ -341,19 +349,23 @@ export namespace ActionParams {
     export interface marketprices {
         location: Type.coordinates
     }
+    export interface salt {
+        salt: UInt64Type
+    }
     export interface sellgoods {
         ship_id: UInt64Type
         good_id: UInt64Type
         quantity: UInt64Type
-    }
-    export interface test {
-        data: string
     }
     export interface travel {
         owner: NameType
         id: UInt64Type
         destination: Type.coordinates
         recharge: boolean
+    }
+    export interface traveltime {
+        id: UInt64Type
+        destination: Type.coordinates
     }
     export interface wipe {}
 }
@@ -362,24 +374,27 @@ export interface ActionNameParams {
     arrive: ActionParams.arrive
     buygoods: ActionParams.buygoods
     cleartable: ActionParams.cleartable
+    commit: ActionParams.commit
     enable: ActionParams.enable
-    esttravel: ActionParams.esttravel
     hash: ActionParams.hash
+    hash512: ActionParams.hash512
     init: ActionParams.init
     join: ActionParams.join
     marketprice: ActionParams.marketprice
     marketprices: ActionParams.marketprices
+    salt: ActionParams.salt
     sellgoods: ActionParams.sellgoods
-    test: ActionParams.test
     travel: ActionParams.travel
+    traveltime: ActionParams.traveltime
     wipe: ActionParams.wipe
 }
 export type ActionNames = keyof ActionNameParams
 export interface ActionReturnValues {
-    esttravel: Types.travel_summary
-    hash: Checksum512
+    hash: Checksum256
+    hash512: Checksum512
     marketprice: Types.good_price
     marketprices: Types.good_price[]
+    traveltime: Types.travel_summary
 }
 export type ActionReturnNames = keyof ActionReturnValues
 export class Contract extends BaseContract {
