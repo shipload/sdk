@@ -14,8 +14,8 @@ interface ShiploadOptions {
 }
 
 interface ShiploadConstructorOptions extends ShiploadOptions {
-    platformContract: Contract
-    serverContract: Contract
+    platformContract?: Contract
+    serverContract?: Contract
 }
 
 export class Shipload {
@@ -23,10 +23,8 @@ export class Shipload {
     public server: Contract
     public platform: Contract
 
-    constructor(
-        chain: ChainDefinition,
-        {client, platformContract, serverContract}: ShiploadConstructorOptions
-    ) {
+    constructor(chain: ChainDefinition, constructorOptions?: ShiploadConstructorOptions) {
+        const {client, platformContract, serverContract} = constructorOptions || {}
         this.client = client || new APIClient({url: chain.url})
 
         this.platform = platformContract
