@@ -25,6 +25,6 @@ export interface Good {
 }
 
 export interface GoodPrice {
-    id: UInt16
+    good: Good
     price: UInt64
 }

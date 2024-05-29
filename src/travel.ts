@@ -1,4 +1,4 @@
-import {Checksum256, Int64, UInt16, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelope'
+import {Checksum256, Int64, UInt16, UInt16Type, UInt64Type} from '@wharfkit/antelope'
 
 import {ServerContract} from './contracts'
 import {hash512} from './hash'

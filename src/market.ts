@@ -24,7 +24,7 @@ export async function marketprices(
     return Promise.all(
         goods.map(async (good) => {
             const price = await marketprice(location, good.id, gameSeed, epochSeed)
-            return {price, id: good.id}
+            return {price, good: good}
         })
     )
 }

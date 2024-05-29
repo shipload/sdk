@@ -38,16 +38,16 @@ suite('Shipload', function () {
     suite('marketprices', function () {
         test('should return correct market prices for all goods', async function () {
             const location: ServerContract.ActionParams.Type.coordinates = {x: 10, y: 20}
-            const prices = await shipload.marketprices(location)
+            const goodPrices = await shipload.marketprices(location)
 
             const onChainMarketPrices = await server.readonly('marketprices', {
                 location,
             })
 
-            assert.equal(prices.length, onChainMarketPrices.length)
-            prices.forEach((price, index) => {
-                assert.isTrue(price.price.equals(onChainMarketPrices[index].price))
-                assert(price.id.equals(onChainMarketPrices[index].id))
+            assert.equal(goodPrices.length, onChainMarketPrices.length)
+            goodPrices.forEach((goodPrice, index) => {
+                assert.isTrue(goodPrice.price.equals(onChainMarketPrices[index].price))
+                assert(goodPrice.good.id.equals(onChainMarketPrices[index].id))
             })
         })
     })
