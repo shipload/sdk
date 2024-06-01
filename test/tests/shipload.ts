@@ -1,7 +1,8 @@
 import {assert} from 'chai'
 import {makeClient} from '@wharfkit/mock-data'
-import Shipload, {ServerContract} from '$lib'
+import Shipload, {PRECISION, ServerContract} from '$lib'
 import {Chains} from '@wharfkit/common'
+import {BlockTimestamp} from '@wharfkit/antelope'
 
 const client = makeClient('https://jungle4.greymass.com')
 const platformContractName = 'platform.gm'
@@ -61,35 +62,61 @@ suite('Shipload', function () {
         })
     })
 
-    suite('hasPlanet', function () {
+    suite('hasSystem', function () {
         test('should return true if planet exists', async function () {
             const location: ServerContract.ActionParams.Type.coordinates = {x: 0, y: 0}
-            const hasPlanet = await shipload.hasPlanet(location)
+            const hasSystem = await shipload.hasSystem(location)
 
-            assert.isTrue(hasPlanet)
+            assert.isTrue(hasSystem)
         })
 
         test('should return false if planet does not exist', async function () {
             const location: ServerContract.ActionParams.Type.coordinates = {x: 100, y: 100}
-            const hasPlanet = await shipload.hasPlanet(location)
+            const hasSystem = await shipload.hasSystem(location)
 
-            assert.isFalse(hasPlanet)
+            assert.isFalse(hasSystem)
         })
     })
 
     suite('findNearbyPlanets', function () {
         test('should return nearby planets', async function () {
             const origin: ServerContract.ActionParams.Type.coordinates = {x: 0, y: 0}
-            const maxDistance = 1
+            const maxDistance = 1 * PRECISION
             const nearbyPlanets = await shipload.findNearbyPlanets(origin, maxDistance)
             const closestPlanet = nearbyPlanets[0]
 
             assert.deepEqual(closestPlanet.destination, {x: 0, y: 1})
-            assert.equal(Number(closestPlanet.distance), 1)
+            assert.equal(Number(closestPlanet.distance), 1 * PRECISION)
             assert.deepEqual(closestPlanet.origin, {
                 x: 0,
                 y: 0,
             })
+        })
+    })
+
+    suite('travelplan', function () {
+        test('should mirror API output', async function () {
+            const ship = await server.table('ship').get()
+            if (!ship) {
+                throw new Error('Ship not found')
+            }
+
+            const api = await server.readonly('travelplan', {
+                id: ship.id,
+                origin: {x: 0, y: 0},
+                destination: {x: 0, y: 1},
+                recharge: true,
+            })
+            const travelplan = await shipload.travelplan(ship, {x: 0, y: 0}, {x: 0, y: 1}, true)
+
+            // The times will be different, so just mock them as the same
+            const mockTime = BlockTimestamp.from(0)
+            api.departure = mockTime
+            travelplan.departure = mockTime
+
+            const result1 = ServerContract.Types.travel_plan.from(travelplan)
+            const result2 = ServerContract.Types.travel_plan.from(api)
+            assert.isTrue(result1.equals(result2))
         })
     })
 })
