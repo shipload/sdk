@@ -38,3 +38,5 @@ export interface GoodPrice {
     good: Good
     price: UInt64
 }
+
+export interface Coordinates extends ServerContract.ActionParams.Type.coordinates {}
