@@ -4,29 +4,27 @@ import {Checksum256Type, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelop
 import {roll} from './rolls'
 import {ServerContract} from './contracts'
 
-export async function marketprice(
+export function marketprice(
     location: ServerContract.ActionParams.Type.coordinates,
     good_id: UInt16Type,
     gameSeed: Checksum256Type,
     epochSeed: Checksum256Type
-): Promise<UInt64> {
+): UInt64 {
     const good = getGood(good_id)
     const rollSeed = `${location.x}${epochSeed}${location.y}${good_id}`
     const rollValue = roll(gameSeed, rollSeed)
     return priceFromRoll(good.base_price, rollValue)
 }
 
-export async function marketprices(
+export function marketprices(
     location: ServerContract.ActionParams.Type.coordinates,
     gameSeed: Checksum256Type,
     epochSeed: Checksum256Type
-): Promise<GoodPrice[]> {
-    return Promise.all(
-        getGoods().map(async (good) => {
-            const price = await marketprice(location, good.id, gameSeed, epochSeed)
-            return {price, good: good}
-        })
-    )
+): GoodPrice[] {
+    return getGoods().map((good) => {
+        const price = marketprice(location, good.id, gameSeed, epochSeed)
+        return {price, good: good}
+    })
 }
 
 export function priceFromRoll(basePrice: UInt64Type, roll: number): UInt64 {
