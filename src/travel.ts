@@ -1,13 +1,33 @@
-import {Checksum256, Int64, UInt16, UInt16Type, UInt64Type} from '@wharfkit/antelope'
+import {
+    BlockTimestamp,
+    Checksum256,
+    Int64,
+    Int64Type,
+    UInt32,
+    UInt32Type,
+    UInt64,
+    UInt64Type,
+} from '@wharfkit/antelope'
 
-import {ServerContract} from './contracts'
+import {PlatformContract, ServerContract} from './contracts'
 import {hash512} from './hash'
-import {Distance} from './types'
+import {Distance, PRECISION} from './types'
+import {getGood} from './goods'
 
-export function distanceTraveled(ship: ServerContract.Types.ship_row): number {
+export function travelplanDuration(travelplan: ServerContract.Types.travel_plan) {
+    return UInt32.from(travelplan.flighttime)
+        .adding(travelplan.rechargetime)
+        .adding(travelplan.loadtime)
+}
+
+export function distanceTraveled(
+    ship: ServerContract.Types.ship_row,
+    current: Date = new Date()
+): number {
     if (ship.travelplan) {
-        const {departure, duration} = ship.travelplan
-        return (+new Date() - +departure.toDate()) / (Number(duration) * 1000)
+        const {departure} = ship.travelplan
+        const duration = travelplanDuration(ship.travelplan)
+        return (+current - +departure.toDate()) / (Number(duration) * 1000)
     }
     return 0
 }
@@ -15,19 +35,19 @@ export function distanceTraveled(ship: ServerContract.Types.ship_row): number {
 export function distanceBetweenCoordinates(
     origin: ServerContract.ActionParams.Type.coordinates,
     destination: ServerContract.ActionParams.Type.coordinates
-): UInt16 {
+): UInt64 {
     return distanceBetweenPoints(origin.x, origin.y, destination.x, destination.y)
 }
 
 export function distanceBetweenPoints(
-    x1: UInt64Type,
-    y1: UInt64Type,
-    x2: UInt64Type,
-    y2: UInt64Type
-): UInt16 {
+    x1: Int64Type,
+    y1: Int64Type,
+    x2: Int64Type,
+    y2: Int64Type
+): UInt64 {
     const x = Math.pow(x1 - x2, 2)
     const y = Math.pow(y1 - y2, 2)
-    return UInt16.from(Math.sqrt(x + y))
+    return UInt64.from(Math.sqrt(x + y) * PRECISION)
 }
 
 export function lerp(
@@ -48,7 +68,7 @@ export function rotation(
     return Math.atan2(destination.y - origin.y, destination.x - origin.x) * (180 / Math.PI) + 90
 }
 
-export function hasPlanet(
+export function hasSystem(
     seed: Checksum256,
     coordinates: ServerContract.ActionParams.Type.coordinates
 ): boolean {
@@ -59,23 +79,29 @@ export function hasPlanet(
 export function findNearbyPlanets(
     seed: Checksum256,
     origin: ServerContract.ActionParams.Type.coordinates,
-    maxDistance: UInt16Type = 20
+    maxDistance: UInt64Type = 20 * PRECISION
 ): Distance[] {
+    // console.log(String(seed), String(maxDistance), JSON.stringify(origin))
     const nearbySystems: Distance[] = []
 
-    const max = UInt16.from(maxDistance)
+    const max = UInt64.from(maxDistance / PRECISION)
     const xMin = Int64.from(origin.x).subtracting(max)
     const xMax = Int64.from(origin.x).adding(max)
     const yMin = Int64.from(origin.y).subtracting(max)
     const yMax = Int64.from(origin.y).adding(max)
+
+    // console.log('xMin', Number(xMin))
+    // console.log('xMax', Number(xMax))
+    // console.log('yMin', Number(yMin))
+    // console.log('yMax', Number(yMax))
 
     for (let x = Number(xMin); x <= Number(xMax); x++) {
         for (let y = Number(yMin); y <= Number(yMax); y++) {
             const samePlace = x === origin.x && y === origin.y
             if (!samePlace) {
                 const distance = distanceBetweenPoints(origin.x, origin.y, x, y)
-                if (Number(distance) <= Number(max)) {
-                    const system = hasPlanet(seed, {x, y})
+                if (Number(distance) <= Number(maxDistance)) {
+                    const system = hasSystem(seed, {x, y})
                     if (system) {
                         nearbySystems.push({origin, destination: {x, y}, distance})
                     }
@@ -85,4 +111,138 @@ export function findNearbyPlanets(
     }
 
     return nearbySystems
+}
+export function travelplan(
+    game: PlatformContract.Types.game_row,
+    ship: ServerContract.Types.ship_row,
+    cargos: ServerContract.Types.cargo_row[],
+    origin: ServerContract.ActionParams.Type.coordinates,
+    destination: ServerContract.ActionParams.Type.coordinates,
+    recharge: boolean
+): ServerContract.Types.travel_plan {
+    const valid = hasSystem(game.config.seed, destination)
+    if (!valid) {
+        throw new Error('Invalid destination')
+    }
+    const distance = distanceBetweenCoordinates(origin, destination)
+    const mass = calc_ship_mass(ship, cargos) // Total mass of ship_id
+    const loadtime = calc_ship_loadtime(ship, cargos)
+    const flighttime = calc_ship_flighttime(ship, mass, distance)
+    const rechargetime = recharge ? calc_ship_rechargetime(ship) : 0
+    const energyusage = calc_energyusage(ship.stats.drain, flighttime) // Energy usage from ship and flighttime
+
+    return ServerContract.Types.travel_plan.from({
+        departure: BlockTimestamp.fromDate(new Date()),
+        destination,
+        loadtime,
+        flighttime,
+        rechargetime,
+        // TODO: Remove below, used for debugging
+        distance,
+        energyusage,
+        mass,
+    })
+}
+
+export function calc_rechargetime(
+    capacity: UInt32Type,
+    energy: UInt32Type,
+    recharge: UInt32Type
+): UInt32 {
+    return UInt32.from(capacity).subtracting(energy).dividing(recharge)
+}
+
+export function calc_ship_rechargetime(ship: ServerContract.Types.ship_row): UInt32 {
+    return calc_rechargetime(ship.stats.capacity, ship.state.energy, ship.stats.recharge)
+}
+
+// uint32_t server::calc_ship_rechargetime(const ship_row ship)
+// {
+//    return calc_rechargetime(ship.stats.capacity, ship.state.energy, ship.stats.recharge);
+// }
+
+export function calc_ship_loadtime(
+    ship: ServerContract.Types.ship_row,
+    cargos: ServerContract.Types.cargo_row[]
+): UInt32 {
+    const loadtime = UInt32.from(0)
+
+    const mass_load = UInt64.from(0)
+    const mass_unload = UInt64.from(0)
+    for (const cargo of cargos) {
+        const cargo_delta = Number(cargo.quantity) - Number(cargo.loaded)
+        if (cargo_delta !== 0) {
+            const good_mass = getGood(cargo.good_id).mass
+            const cargo_mass = good_mass.multiplying(Math.abs(cargo_delta))
+
+            if (cargo_delta > 0) {
+                mass_load.add(cargo_mass)
+            } else {
+                mass_unload.add(cargo_mass)
+            }
+        }
+    }
+
+    if (Number(mass_load) > 0 || Number(mass_unload) > 0) {
+        mass_load.add(ship.loaders.mass)
+        loadtime.add(calc_loader_flighttime(ship, mass_load))
+
+        mass_unload.add(ship.loaders.mass)
+        loadtime.add(calc_loader_flighttime(ship, mass_unload))
+    }
+
+    return loadtime.dividing(ship.loaders.quantity)
+}
+
+export function calc_flighttime(distance: UInt64Type, acceleration: number): UInt32 {
+    return UInt32.from(2 * Math.sqrt(Number(distance) / acceleration))
+}
+
+export function calc_loader_flighttime(ship: ServerContract.Types.ship_row, mass: UInt64): UInt32 {
+    return calc_flighttime(ship.stats.orbit, calc_loader_acceleration(ship, mass))
+}
+
+export function calc_loader_acceleration(
+    ship: ServerContract.Types.ship_row,
+    mass: UInt64
+): number {
+    return calc_acceleration(Number(ship.loaders.thrust), Number(mass) + Number(ship.loaders.mass))
+}
+
+export function calc_ship_flighttime(
+    ship: ServerContract.Types.ship_row,
+    mass: UInt64,
+    distance: UInt64
+): UInt32 {
+    const acceleration = calc_ship_acceleration(ship, mass)
+    return calc_flighttime(distance, acceleration)
+}
+
+export function calc_ship_acceleration(ship: ServerContract.Types.ship_row, mass: UInt64): number {
+    return calc_acceleration(Number(ship.stats.thrust), Number(mass))
+}
+
+export function calc_acceleration(thrust: number, mass: number): number {
+    return (thrust / mass) * PRECISION
+}
+
+export function calc_ship_mass(
+    ship: ServerContract.Types.ship_row,
+    cargos: ServerContract.Types.cargo_row[]
+): UInt64 {
+    const mass = UInt64.from(ship.stats.mass)
+
+    if (Number(ship.loaders.quantity) > 0) {
+        mass.add(ship.loaders.mass.multiplying(ship.loaders.quantity))
+    }
+
+    for (const cargo of cargos) {
+        mass.add(getGood(cargo.good_id).mass.multiplying(cargo.quantity))
+    }
+
+    return mass
+}
+
+export function calc_energyusage(drain: UInt32Type, flighttime: UInt32Type): UInt32 {
+    return UInt32.from(drain).multiplying(flighttime)
 }

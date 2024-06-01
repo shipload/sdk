@@ -5,7 +5,7 @@ import {PlatformContract, ServerContract} from './contracts'
 import {ERROR_SYSTEM_NOT_INITIALIZED} from './errors'
 import {ChainDefinition} from '@wharfkit/session'
 import ContractKit, {Contract} from '@wharfkit/contract'
-import {findNearbyPlanets, hasPlanet} from './travel'
+import {findNearbyPlanets, hasSystem, travelplan} from './travel'
 
 interface ShiploadOptions {
     platformContractName?: string
@@ -98,9 +98,9 @@ export class Shipload {
         return marketprices(location, game.config.seed, state.seed)
     }
 
-    async hasPlanet(location: ServerContract.ActionParams.Type.coordinates): Promise<boolean> {
+    async hasSystem(location: ServerContract.ActionParams.Type.coordinates): Promise<boolean> {
         const game = await this.getGame()
-        return hasPlanet(game.config.seed, location)
+        return hasSystem(game.config.seed, location)
     }
 
     async findNearbyPlanets(
@@ -109,5 +109,20 @@ export class Shipload {
     ): Promise<Distance[]> {
         const game = await this.getGame()
         return findNearbyPlanets(game.config.seed, origin, maxDistance)
+    }
+
+    async travelplan(
+        ship: ServerContract.Types.ship_row,
+        origin: ServerContract.ActionParams.Type.coordinates,
+        destination: ServerContract.ActionParams.Type.coordinates,
+        recharge = false
+    ): Promise<ServerContract.Types.travel_plan> {
+        const game = await this.getGame()
+        const cargos = await this.server.table('cargo').all({
+            from: ship.id,
+            to: ship.id,
+            index_position: 'secondary',
+        })
+        return travelplan(game, ship, cargos, origin, destination, recharge)
     }
 }
