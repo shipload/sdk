@@ -78,3 +78,12 @@ clean:
 .PHONY: distclean
 distclean: clean
 	rm -rf node_modules/
+
+.PHONY: codegen
+codegen: codegen/platform codegen/server
+
+codegen/platform:
+	npx @wharfkit/cli generate --url https://jungle4.greymass.com --file ./src/contracts/platform.ts platform.gm
+
+codegen/server:
+	npx @wharfkit/cli generate --url https://jungle4.greymass.com --file ./src/contracts/server.ts shipload.gm
