@@ -1,5 +1,7 @@
-import {UInt16, UInt64} from '@wharfkit/antelope'
+import {UInt16, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelope'
 import {ServerContract} from './contracts'
+
+export const PRECISION = 10000
 
 export interface CameraPosition extends ServerContract.ActionParams.Type.coordinates {
     z: number
@@ -22,6 +24,14 @@ export interface Good {
     description: string
     base_price: UInt64
     mass: UInt64
+}
+
+export interface GoodType {
+    id: UInt16Type
+    name: string
+    description: string
+    base_price: UInt64Type
+    mass: UInt64Type
 }
 
 export interface GoodPrice {
