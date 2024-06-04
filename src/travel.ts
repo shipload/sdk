@@ -129,16 +129,16 @@ export function travelplan(
     const loadtime = calc_ship_loadtime(ship, cargos)
     const flighttime = calc_ship_flighttime(ship, mass, distance)
     const rechargetime = recharge ? calc_ship_rechargetime(ship) : 0
-    const energyusage = calc_energyusage(ship.stats.drain, flighttime) // Energy usage from ship and flighttime
+    const energyusage = calc_energyusage(distance, ship.stats.drain) // Energy usage from ship and flighttime
 
     return ServerContract.Types.travel_plan.from({
         departure: BlockTimestamp.fromDate(new Date()),
         destination,
+        distance,
         loadtime,
         flighttime,
         rechargetime,
         // TODO: Remove below, used for debugging
-        distance,
         energyusage,
         mass,
     })
@@ -243,6 +243,6 @@ export function calc_ship_mass(
     return mass
 }
 
-export function calc_energyusage(drain: UInt32Type, flighttime: UInt32Type): UInt32 {
-    return UInt32.from(drain).multiplying(flighttime)
+export function calc_energyusage(distance: UInt64Type, drain: UInt32Type): UInt32 {
+    return UInt64.from(distance).dividing(PRECISION).multiplying(drain)
 }
