@@ -1,4 +1,12 @@
-import {APIClient, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelope'
+import {
+    APIClient,
+    Name,
+    NameType,
+    Serializer,
+    UInt16Type,
+    UInt64,
+    UInt64Type,
+} from '@wharfkit/antelope'
 import {Distance, GoodPrice} from './types'
 import {marketprice, marketprices} from './market'
 import {PlatformContract, ServerContract} from './contracts'
@@ -6,6 +14,7 @@ import {ERROR_SYSTEM_NOT_INITIALIZED} from './errors'
 import {ChainDefinition} from '@wharfkit/session'
 import ContractKit, {Contract} from '@wharfkit/contract'
 import {findNearbyPlanets, hasSystem, travelplan} from './travel'
+import {Ship} from './ship'
 
 interface ShiploadOptions {
     platformContractName?: string
@@ -79,6 +88,45 @@ export class Shipload {
             throw new Error(ERROR_SYSTEM_NOT_INITIALIZED)
         }
         return state
+    }
+
+    async getShip(ship_id: UInt64Type): Promise<Ship> {
+        const ship = await this.server.table('ship').get(UInt64.from(ship_id))
+        if (!ship) {
+            throw new Error('No ship found')
+        }
+        return new Ship(ship)
+    }
+
+    async getShips(player: NameType | ServerContract.Types.player_row): Promise<Ship[]> {
+        let account: Name
+        if (player instanceof ServerContract.Types.player_row) {
+            account = player.owner
+        } else {
+            account = Name.from(player)
+        }
+        const from = Serializer.decode({
+            data:
+                Serializer.encode({object: UInt64.from(UInt64.min)}).hexString +
+                Serializer.encode({object: Name.from(account)}).hexString,
+            type: 'uint128',
+        })
+        const to = Serializer.decode({
+            data:
+                Serializer.encode({object: UInt64.from(UInt64.max)}).hexString +
+                Serializer.encode({object: Name.from(account)}).hexString,
+            type: 'uint128',
+        })
+        const ships = await this.server
+            .table('ship')
+            .query({
+                key_type: 'i128',
+                index_position: 'secondary',
+                from,
+                to,
+            })
+            .all()
+        return ships.map((ship) => new Ship(ship))
     }
 
     async marketprice(

@@ -3,6 +3,7 @@ import {makeClient} from '@wharfkit/mock-data'
 import Shipload, {PRECISION, ServerContract} from '$lib'
 import {Chains} from '@wharfkit/common'
 import {BlockTimestamp, UInt64} from '@wharfkit/antelope'
+import {Ship} from 'src/ship'
 
 const client = makeClient('https://jungle4.greymass.com')
 const platformContractName = 'platform.gm'
@@ -75,6 +76,26 @@ suite('Shipload', function () {
             const hasSystem = await shipload.hasSystem(location)
 
             assert.isFalse(hasSystem)
+        })
+    })
+
+    suite('getShip', function () {
+        test('success', async function () {
+            const ship = await server.table('ship').get(UInt64.from(1))
+            if (!ship) {
+                throw new Error('No ship found')
+            }
+            const sdkShip = await shipload.getShip(1)
+            assert.deepEqual(sdkShip, ship)
+        })
+    })
+
+    suite('getShips', function () {
+        test('success', async function () {
+            const ships = await shipload.getShips('npc1.gm')
+            assert.isArray(ships)
+            assert.lengthOf(ships, 1)
+            assert.instanceOf(ships[0], Ship)
         })
     })
 
