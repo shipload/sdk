@@ -2,7 +2,7 @@ import {assert} from 'chai'
 import {makeClient} from '@wharfkit/mock-data'
 import Shipload, {PRECISION, ServerContract} from '$lib'
 import {Chains} from '@wharfkit/common'
-import {BlockTimestamp} from '@wharfkit/antelope'
+import {BlockTimestamp, UInt64} from '@wharfkit/antelope'
 
 const client = makeClient('https://jungle4.greymass.com')
 const platformContractName = 'platform.gm'
@@ -117,6 +117,31 @@ suite('Shipload', function () {
             const result1 = ServerContract.Types.travel_plan.from(travelplan)
             const result2 = ServerContract.Types.travel_plan.from(api)
             assert.isTrue(result1.equals(result2))
+        })
+    })
+
+    suite('getCargo', function () {
+        test('success with ship_row', async function () {
+            const ship = await server.table('ship').get(UInt64.from(4))
+            if (!ship) {
+                throw new Error('No ship found')
+            }
+            const cargoItems = await shipload.getCargo(ship)
+            assert.lengthOf(cargoItems, 2)
+            const cargoItem = cargoItems[0]
+            assert.equal(Number(cargoItem.ship_id), 4)
+            assert.equal(Number(cargoItem.good_id), 3)
+            assert.equal(Number(cargoItem.quantity), 1)
+        })
+
+        test('success with UInt64Type', async function () {
+            const shipId = UInt64.from(4)
+            const cargoItems = await shipload.getCargo(shipId)
+            assert.lengthOf(cargoItems, 2)
+            const cargoItem = cargoItems[0]
+            assert.equal(Number(cargoItem.ship_id), 4)
+            assert.equal(Number(cargoItem.good_id), 3)
+            assert.equal(Number(cargoItem.quantity), 1)
         })
     })
 })

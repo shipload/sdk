@@ -1,4 +1,4 @@
-import {APIClient, UInt16Type, UInt64} from '@wharfkit/antelope'
+import {APIClient, UInt16Type, UInt64, UInt64Type} from '@wharfkit/antelope'
 import {Distance, GoodPrice} from './types'
 import {marketprice, marketprices} from './market'
 import {PlatformContract, ServerContract} from './contracts'
@@ -124,5 +124,28 @@ export class Shipload {
             index_position: 'secondary',
         })
         return travelplan(game, ship, cargos, origin, destination, recharge)
+    }
+
+    async getCargo(
+        ship: UInt64Type | ServerContract.Types.ship_row
+    ): Promise<ServerContract.Types.cargo_row[]> {
+        let shipId: UInt64
+        if (ship instanceof ServerContract.Types.ship_row) {
+            shipId = UInt64.from(ship.id)
+        } else {
+            shipId = UInt64.from(ship)
+        }
+
+        const cargoItems = await this.server
+            .table('cargo')
+            .query({
+                key_type: 'i64',
+                index_position: 'secondary',
+                from: shipId,
+                to: shipId,
+            })
+            .all()
+
+        return cargoItems
     }
 }
