@@ -230,7 +230,9 @@ export function calc_ship_mass(
     ship: ServerContract.Types.ship_row,
     cargos: ServerContract.Types.cargo_row[]
 ): UInt64 {
-    const mass = UInt64.from(ship.stats.mass)
+    const mass = UInt64.from(0)
+
+    mass.add(ship.stats.mass)
 
     if (Number(ship.loaders.quantity) > 0) {
         mass.add(ship.loaders.mass.multiplying(ship.loaders.quantity))
